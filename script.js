@@ -215,9 +215,37 @@ function questionsView() {
 
 function topicsView() {
   return `
-    ${pageHeader("Topics", "The things I keep coming back to.")}
-    <div class="topic-map">
-      ${state.topics.map(topic => `<button class="topic">${escapeHTML(topic)}</button>`).join("")}
+    <div class="section-heading">
+      <div>
+        <h1 class="page-title">Topics</h1>
+        <p class="page-subtitle">The things I keep coming back to.</p>
+      </div>
+
+      <button class="write-btn" id="newTopicBtn">
+        + New topic
+      </button>
+    </div>
+
+    <div class="topic-grid">
+      ${state.topics.map((topic, index) => `
+        <article class="topic-card">
+          <h3>${escapeHTML(topic)}</h3>
+
+          <div class="topic-actions">
+            <button
+              class="topic-edit"
+              data-edit-topic="${index}">
+              Edit
+            </button>
+
+            <button
+              class="topic-delete"
+              data-delete-topic="${index}">
+              ×
+            </button>
+          </div>
+        </article>
+      `).join("")}
     </div>
 
     <div class="section">
@@ -227,7 +255,65 @@ function topicsView() {
     </div>
   `;
 }
+function addTopic() {
+  const name = prompt("Topic name:");
+  if (!name || !name.trim()) return;
+  const topic = name.trim();
+  if (state.topics.includes(topic)) {
+    alert("This topic already exists.");
+    return;
+  }
+  state.topics.push(topic);
+  saveState();
+  render();
+}
+function editTopic(index) {
+  const oldName = state.topics[index];
+  const newName = prompt("Rename topic:", oldName);
+  if (!newName || !newName.trim()) return;
+  const topic = newName.trim();
+  if (
+    state.topics.some(
+      (item, i) => item === topic && i !== index
+    )
+  ) {
+    alert("This topic already exists.");
+    return;
+  }
+  state.topics[index] = topic;
+  saveState();
+  render();
+}
+function deleteTopic(index) {
+  const topic = state.topics[index];
+  const confirmed = confirm(
+    `Delete "${topic}"?`
+  );
+  if (!confirmed) return;
+  state.topics.splice(index, 1);
 
+  saveState();
+  render();
+}
+function bindViewEvents() {
+  const newTopicBtn = document.getElementById("newTopicBtn");
+
+  if (newTopicBtn) {
+    newTopicBtn.addEventListener("click", addTopic);
+  }
+
+  document.querySelectorAll("[data-edit-topic]").forEach(button => {
+    button.addEventListener("click", () => {
+      editTopic(Number(button.dataset.editTopic));
+    });
+  });
+}
+
+  document.querySelectorAll("[data-delete-topic]").forEach(button => {
+    button.addEventListener("click", () => {
+      deleteTopic(Number(button.dataset.deleteTopic));
+    });
+  });
 function showEntry(id) {
   const entry = state.journal.find(item => item.id === id);
   if (!entry) return;
