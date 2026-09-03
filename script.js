@@ -32,7 +32,20 @@ const defaultQuestions = [
   }
 ];
 
-const defaultTopics = ["Love", "People", "Growth"];
+const defaultTopics = [
+  {
+    name: "Love",
+    description: "Thoughts about intimacy, attachment, and the ways we love."
+  },
+  {
+    name: "People",
+    description: "Observations about people, relationships, and human nature."
+  },
+  {
+    name: "Growth",
+    description: "Thoughts about change, becoming, and understanding myself."
+  }
+];
 
 let state = loadState();
 let currentView = "home";
@@ -237,9 +250,10 @@ function topicsView() {
       ${state.topics.length
         ? state.topics.map((topic, index) => `
           <article class="topic-card">
-            <button class="topic-name" data-open-topic="${index}">
-              ${escapeHTML(topic)}
-            </button>
+            <div class="topic-main" data-open-topic="${index}">
+              <h3>${escapeHTML(topic.name)}</h3>
+              <p>${escapeHTML(topic.description || "A space for thoughts connected to this topic.")}</p>
+            </div>
 
             <div class="topic-actions">
               <button class="topic-edit" data-edit-topic="${index}">Edit</button>
@@ -257,9 +271,9 @@ function topicsView() {
     </div>
   `;
 }
-
 function topicDetailView(index) {
   const topic = state.topics[index];
+  const topicName = topic.name;
 
   if (!topic) {
     currentView = "topics";
