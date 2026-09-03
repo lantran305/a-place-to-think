@@ -46,7 +46,7 @@ button { cursor: pointer; }
 .brand {
   color: var(--text);
   text-decoration: none;
-  font-family: "Newsreader", Georgia, serif;
+  font-family: "DM Sans", Arial, sans-serif;
   font-size: 20px;
   letter-spacing: .01em;
 }
@@ -116,7 +116,7 @@ main { padding: 70px 0 90px; }
 
 .hero h1,
 .page-title {
-  font-family: "Newsreader", Georgia, serif;
+  font-family: "DM Sans", Arial, sans-serif;
   font-weight: 500;
   letter-spacing: -.02em;
 }
@@ -129,7 +129,7 @@ main { padding: 70px 0 90px; }
 
 .tagline {
   color: var(--muted);
-  font-family: "Newsreader", Georgia, serif;
+  font-family: "DM Sans", Arial, sans-serif;
   font-size: 20px;
   font-style: italic;
 }
@@ -187,7 +187,7 @@ main { padding: 70px 0 90px; }
 .entry-title,
 .item-title {
   margin: 0;
-  font-family: "Newsreader", Georgia, serif;
+  font-family: "DM Sans", Arial, sans-serif;
   font-size: 21px;
   font-weight: 500;
 }
@@ -224,7 +224,7 @@ main { padding: 70px 0 90px; }
 .empty strong {
   display: block;
   color: var(--text);
-  font-family: "Newsreader", Georgia, serif;
+  font-family: "DM Sans", Arial, sans-serif;
   font-size: 22px;
   font-weight: 500;
   margin-bottom: 6px;
@@ -235,7 +235,7 @@ main { padding: 70px 0 90px; }
   margin: 0 auto;
   padding: 35px 0;
   text-align: center;
-  font-family: "Newsreader", Georgia, serif;
+  font-family: "DM Sans", Arial, sans-serif;
   font-size: 25px;
   line-height: 1.5;
 }
@@ -267,7 +267,7 @@ main { padding: 70px 0 90px; }
 }
 
 .card h3 {
-  font-family: "Newsreader", Georgia, serif;
+  font-family: "DM Sans", Arial, sans-serif;
   font-size: 25px;
   font-weight: 500;
   margin: 0 0 7px;
@@ -299,7 +299,7 @@ main { padding: 70px 0 90px; }
 }
 
 .reading h1 {
-  font-family: "Newsreader", Georgia, serif;
+  font-family: "DM Sans", Arial, sans-serif;
   font-size: clamp(38px, 6vw, 60px);
   line-height: 1.15;
   font-weight: 500;
@@ -314,7 +314,7 @@ main { padding: 70px 0 90px; }
 .reading-content {
   margin-top: 42px;
   white-space: pre-wrap;
-  font-family: "Newsreader", Georgia, serif;
+  font-family: "DM Sans", Arial, sans-serif;
   font-size: 19px;
   line-height: 1.9;
 }
@@ -332,7 +332,7 @@ main { padding: 70px 0 90px; }
   background: transparent;
   padding: 14px 22px;
   border-radius: 999px;
-  font-family: "Newsreader", Georgia, serif;
+  font-family: "DM Sans", Arial, sans-serif;
   font-size: 19px;
 }
 
@@ -399,7 +399,7 @@ main { padding: 70px 0 90px; }
 
 .title-input {
   margin-top: 35px;
-  font-family: "Newsreader", Georgia, serif;
+  font-family: "DM Sans", Arial, sans-serif;
   font-size: 30px;
 }
 
@@ -407,7 +407,7 @@ main { padding: 70px 0 90px; }
   min-height: 360px;
   resize: vertical;
   margin-top: 20px;
-  font-family: "Newsreader", Georgia, serif;
+  font-family: "DM Sans", Arial, sans-serif;
   font-size: 18px;
   line-height: 1.85;
 }
