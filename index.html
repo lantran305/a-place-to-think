@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="A quiet place for thoughts to unfold." />
+  <title>A Place to Think</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <a class="brand" href="#" data-view="home">
+        <span>A Place to Think</span>
+      </a>
+
+      <nav class="nav">
+        <button data-view="journal">Journal</button>
+        <button data-view="ideas">Ideas</button>
+        <button data-view="questions">Questions</button>
+        <button data-view="topics">Topics</button>
+      </nav>
+
+      <button class="write-btn" id="newThoughtBtn">+ New thought</button>
+    </header>
+
+    <main id="app"></main>
+
+    <footer class="footer">
+      <span>A quiet place for thoughts to unfold.</span>
+      <span>Private on this device.</span>
+    </footer>
+  </div>
+
+  <div class="modal hidden" id="thoughtModal" aria-hidden="true">
+    <div class="modal-backdrop" data-close-modal></div>
+    <section class="editor">
+      <div class="editor-top">
+        <span>New thought</span>
+        <button class="close-btn" data-close-modal aria-label="Close">×</button>
+      </div>
+
+      <input id="thoughtTitle" class="title-input" type="text"
+             placeholder="Give this thought a title (optional)" />
+
+      <textarea id="thoughtContent" class="content-input"
+                placeholder="What is on your mind?"></textarea>
+
+      <div class="editor-bottom">
+        <input id="thoughtMood" class="mood-input" type="text"
+               placeholder="Mood (optional)" />
+        <button class="save-btn" id="saveThoughtBtn">Save thought</button>
+      </div>
+    </section>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
