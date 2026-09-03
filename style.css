@@ -542,3 +542,10 @@ main { padding: 70px 0 90px; }
     grid-template-columns: 1fr;
   }
 }
+
+/* Interaction fixes */
+.entry { width: 100%; background: transparent; border: 0; color: inherit; text-align: left; cursor: pointer; }
+.topic-main { width: 100%; border: 0; background: transparent; color: inherit; text-align: left; padding: 0; cursor: pointer; }
+.topic-main p { color: var(--muted); margin: 7px 0 0; }
+.topic-main:hover h3 { text-decoration: underline; text-decoration-color: var(--yellow); text-underline-offset: 5px; }
+.modal { isolation: isolate; }

@@ -1,310 +1,102 @@
-import { saveThoughtData } from "./app.js";
+let modal = null;
+let mode = "thought";
+let callback = null;
 
-let modalMode = "thought";
-let modalCallback = null;
-
-export function createThoughtModal() {
-  if (document.getElementById("thoughtModal")) return;
+export function initModal() {
+  if (document.getElementById("thoughtModal")) {
+    modal = document.getElementById("thoughtModal");
+    return;
+  }
 
   document.body.insertAdjacentHTML("beforeend", `
     <div class="modal hidden" id="thoughtModal" aria-hidden="true">
-      <div class="modal-overlay" data-close-modal></div>
-
-      <div class="modal-box">
-
-        <button class="modal-close" data-close-modal>×</button>
-
-        <div class="eyebrow" id="modalEyebrow">
-          NEW THOUGHT
+      <div class="modal-backdrop" data-close-modal></div>
+      <section class="editor" role="dialog" aria-modal="true" aria-labelledby="modalEyebrow">
+        <div class="editor-top">
+          <span id="modalEyebrow">NEW THOUGHT</span>
+          <button class="close-btn" type="button" data-close-modal aria-label="Close">×</button>
         </div>
-
-        <input
-          type="text"
-          id="modalTitle"
-          class="modal-title-input"
-          placeholder="Give this thought a title (optional)"
-          autocomplete="off"
-        >
-
-        <textarea
-          id="modalContent"
-          class="modal-content-input"
-          placeholder="What is on your mind?"
-        ></textarea>
-
-        <input
-          type="text"
-          id="modalDescription"
-          class="modal-description-input"
-          placeholder="Mood (optional)"
-          autocomplete="off"
-        >
-
-        <div class="modal-actions">
-
-          <button
-            class="text-link"
-            data-close-modal
-          >
-            Cancel
-          </button>
-
-          <button
-            class="write-btn"
-            id="saveModalBtn"
-          >
-            Save thought
-          </button>
-
+        <input id="modalTitle" class="title-input" type="text" autocomplete="off" />
+        <textarea id="modalContent" class="content-input"></textarea>
+        <input id="modalDescription" class="mood-input" type="text" autocomplete="off" />
+        <div class="editor-bottom">
+          <button class="text-link" type="button" data-close-modal>Cancel</button>
+          <button class="save-btn" id="saveModalBtn" type="button">Save thought</button>
         </div>
+      </section>
+    </div>`);
 
-      </div>
-    </div>
-  `);
-
-  document
-    .querySelectorAll("[data-close-modal]")
-    .forEach(element => {
-      element.addEventListener("click", closeModal);
-    });
-
-  document
-    .getElementById("saveModalBtn")
-    .addEventListener("click", saveModal);
+  modal = document.getElementById("thoughtModal");
+  modal.querySelectorAll("[data-close-modal]").forEach(el => el.addEventListener("click", closeModal));
+  document.getElementById("saveModalBtn").addEventListener("click", saveModal);
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && !modal.classList.contains("hidden")) closeModal(); });
 }
 
-
-export function openThoughtModal() {
-  modalMode = "thought";
-  modalCallback = null;
-
-  setModalContent(
-    "NEW THOUGHT",
-    "Give this thought a title (optional)",
-    "What is on your mind?",
-    "Mood (optional)",
-    "Save thought",
-    "",
-    "",
-    true
-  );
-
-  showModal();
-}
-
-
-export function openTopicModal(
-  callback,
-  existingName = "",
-  existingDescription = ""
-) {
-  modalMode = "topic";
-  modalCallback = callback;
-
-  setModalContent(
-    existingName ? "EDIT TOPIC" : "NEW TOPIC",
-    "Topic name",
-    "",
-    "A short description (optional)",
-    existingName ? "Save changes" : "Add topic",
-    existingName,
-    existingDescription,
-    false
-  );
-
-  showModal();
-}
-
-
-export function openArticleModal(callback) {
-  modalMode = "article";
-  modalCallback = callback;
-
-  setModalContent(
-    "NEW ARTICLE",
-    "Give this article a title",
-    "Write your thoughts or paste the article link here...",
-    "",
-    "Save article",
-    "",
-    "",
-    true
-  );
-
-  showModal();
-}
-
-
-function setModalContent(
-  eyebrow,
-  titlePlaceholder,
-  contentPlaceholder,
-  descriptionPlaceholder,
-  buttonText,
-  titleValue = "",
-  descriptionValue = "",
-  showContent = true
-) {
-  document.getElementById("modalEyebrow").textContent =
-    eyebrow;
-
-  document.getElementById("modalTitle").placeholder =
-    titlePlaceholder;
-
-  document.getElementById("modalContent").placeholder =
-    contentPlaceholder;
-
-  document.getElementById("modalDescription").placeholder =
-    descriptionPlaceholder;
-
-  document.getElementById("saveModalBtn").textContent =
-    buttonText;
-
-  document.getElementById("modalTitle").value =
-    titleValue;
-
-  document.getElementById("modalContent").value =
-    "";
-
-  document.getElementById("modalDescription").value =
-    descriptionValue;
-
-  document.getElementById("modalContent").style.display =
-    showContent ? "block" : "none";
-
-  document.getElementById("modalDescription").style.display =
-    descriptionPlaceholder ? "block" : "none";
-}
-
-
-function showModal() {
-  const modal =
-    document.getElementById("thoughtModal");
-
+function configure({ title, content, description, eyebrow, button, contentVisible = true, descriptionVisible = true, onSave }) {
+  initModal();
+  document.getElementById("modalEyebrow").textContent = eyebrow;
+  const titleInput = document.getElementById("modalTitle");
+  const contentInput = document.getElementById("modalContent");
+  const descriptionInput = document.getElementById("modalDescription");
+  titleInput.placeholder = title.placeholder || "";
+  titleInput.value = title.value || "";
+  contentInput.placeholder = content.placeholder || "";
+  contentInput.value = content.value || "";
+  descriptionInput.placeholder = description.placeholder || "";
+  descriptionInput.value = description.value || "";
+  contentInput.style.display = contentVisible ? "block" : "none";
+  descriptionInput.style.display = descriptionVisible ? "block" : "none";
+  document.getElementById("saveModalBtn").textContent = button;
+  mode = "custom";
+  callback = onSave;
   modal.classList.remove("hidden");
-
-  modal.setAttribute(
-    "aria-hidden",
-    "false"
-  );
-
-  document
-    .getElementById("modalTitle")
-    .focus();
+  modal.setAttribute("aria-hidden", "false");
+  titleInput.focus();
 }
 
-
-export function closeModal() {
-  const modal =
-    document.getElementById("thoughtModal");
-
-  if (!modal) return;
-
-  modal.classList.add("hidden");
-
-  modal.setAttribute(
-    "aria-hidden",
-    "true"
-  );
-
-  modalCallback = null;
+export function openThoughtModal(onSave) {
+  configure({
+    eyebrow: "NEW THOUGHT", button: "Save thought",
+    title: { placeholder: "Give this thought a title (optional)" },
+    content: { placeholder: "What is on your mind?" },
+    description: { placeholder: "Mood (optional)" },
+    onSave, contentVisible: true, descriptionVisible: true
+  });
 }
 
+export function openTopicModal(onSave, name = "", description = "") {
+  configure({
+    eyebrow: name ? "EDIT TOPIC" : "NEW TOPIC", button: name ? "Save changes" : "Add topic",
+    title: { placeholder: "Topic name", value: name },
+    content: { placeholder: "" },
+    description: { placeholder: "A short description (optional)", value: description },
+    onSave, contentVisible: false, descriptionVisible: true
+  });
+}
+
+export function openArticleModal(onSave) {
+  configure({
+    eyebrow: "NEW ARTICLE", button: "Save article",
+    title: { placeholder: "Give this article a title" },
+    content: { placeholder: "Write your thoughts or paste the article link here..." },
+    description: { placeholder: "" },
+    onSave, contentVisible: true, descriptionVisible: false
+  });
+}
 
 function saveModal() {
-  const title =
-    document
-      .getElementById("modalTitle")
-      .value
-      .trim();
+  const title = document.getElementById("modalTitle").value.trim();
+  const content = document.getElementById("modalContent").value.trim();
+  const description = document.getElementById("modalDescription").value.trim();
 
-  const content =
-    document
-      .getElementById("modalContent")
-      .value
-      .trim();
-
-  const description =
-    document
-      .getElementById("modalDescription")
-      .value
-      .trim();
-
-
-  if (modalMode === "thought") {
-
-    if (!content) {
-      document
-        .getElementById("modalContent")
-        .focus();
-
-      return;
-    }
-
-    saveThoughtData(
-      title,
-      content,
-      description
-    );
-
-    closeModal();
-
-    return;
-  }
-
-
-  if (modalMode === "topic") {
-
-    if (!title) {
-      document
-        .getElementById("modalTitle")
-        .focus();
-
-      return;
-    }
-
-    if (modalCallback) {
-      modalCallback(
-        title,
-        description
-      );
-    }
-
-    closeModal();
-
-    return;
-  }
-
-
-  if (modalMode === "article") {
-
-    if (!content) {
-      document
-        .getElementById("modalContent")
-        .focus();
-
-      return;
-    }
-
-    if (modalCallback) {
-      modalCallback(
-        title,
-        content
-      );
-    }
-
-    closeModal();
-
-    return;
+  if (mode === "custom" && callback) {
+    callback({ title, content, description });
   }
 }
 
-
-document.addEventListener(
-  "keydown",
-  event => {
-    if (event.key === "Escape") {
-      closeModal();
-    }
-  }
-);
+export function closeModal() {
+  if (!modal) return;
+  modal.classList.add("hidden");
+  modal.setAttribute("aria-hidden", "true");
+  callback = null;
+}
