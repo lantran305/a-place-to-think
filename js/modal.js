@@ -36,17 +36,23 @@ export function createThoughtModal() {
           type="text"
           id="modalDescription"
           class="modal-description-input"
-          placeholder="Description (optional)"
+          placeholder="Mood (optional)"
           autocomplete="off"
         >
 
         <div class="modal-actions">
 
-          <button class="text-link" data-close-modal>
+          <button
+            class="text-link"
+            data-close-modal
+          >
             Cancel
           </button>
 
-          <button class="write-btn" id="saveModalBtn">
+          <button
+            class="write-btn"
+            id="saveModalBtn"
+          >
             Save thought
           </button>
 
@@ -67,6 +73,7 @@ export function createThoughtModal() {
     .addEventListener("click", saveModal);
 }
 
+
 export function openThoughtModal() {
   modalMode = "thought";
   modalCallback = null;
@@ -76,26 +83,38 @@ export function openThoughtModal() {
     "Give this thought a title (optional)",
     "What is on your mind?",
     "Mood (optional)",
-    "Save thought"
+    "Save thought",
+    "",
+    "",
+    true
   );
 
   showModal();
 }
 
-export function openTopicModal(callback) {
+
+export function openTopicModal(
+  callback,
+  existingName = "",
+  existingDescription = ""
+) {
   modalMode = "topic";
   modalCallback = callback;
 
   setModalContent(
-    "NEW TOPIC",
-    "What do you want to call this topic?",
+    existingName ? "EDIT TOPIC" : "NEW TOPIC",
+    "Topic name",
     "",
     "A short description (optional)",
-    "Add topic"
+    existingName ? "Save changes" : "Add topic",
+    existingName,
+    existingDescription,
+    false
   );
 
   showModal();
 }
+
 
 export function openArticleModal(callback) {
   modalMode = "article";
@@ -106,20 +125,28 @@ export function openArticleModal(callback) {
     "Give this article a title",
     "Write your thoughts or paste the article link here...",
     "",
-    "Save article"
+    "Save article",
+    "",
+    "",
+    true
   );
 
   showModal();
 }
+
 
 function setModalContent(
   eyebrow,
   titlePlaceholder,
   contentPlaceholder,
   descriptionPlaceholder,
-  buttonText
+  buttonText,
+  titleValue = "",
+  descriptionValue = "",
+  showContent = true
 ) {
-  document.getElementById("modalEyebrow").textContent = eyebrow;
+  document.getElementById("modalEyebrow").textContent =
+    eyebrow;
 
   document.getElementById("modalTitle").placeholder =
     titlePlaceholder;
@@ -133,22 +160,22 @@ function setModalContent(
   document.getElementById("saveModalBtn").textContent =
     buttonText;
 
-  document.getElementById("modalTitle").value = "";
-  document.getElementById("modalContent").value = "";
-  document.getElementById("modalDescription").value = "";
+  document.getElementById("modalTitle").value =
+    titleValue;
 
-  const content =
-    document.getElementById("modalContent");
+  document.getElementById("modalContent").value =
+    "";
 
-  const description =
-    document.getElementById("modalDescription");
+  document.getElementById("modalDescription").value =
+    descriptionValue;
 
-  content.style.display =
-    contentPlaceholder ? "block" : "none";
+  document.getElementById("modalContent").style.display =
+    showContent ? "block" : "none";
 
-  description.style.display =
+  document.getElementById("modalDescription").style.display =
     descriptionPlaceholder ? "block" : "none";
 }
+
 
 function showModal() {
   const modal =
@@ -166,6 +193,7 @@ function showModal() {
     .focus();
 }
 
+
 export function closeModal() {
   const modal =
     document.getElementById("thoughtModal");
@@ -181,6 +209,7 @@ export function closeModal() {
 
   modalCallback = null;
 }
+
 
 function saveModal() {
   const title =
@@ -201,7 +230,9 @@ function saveModal() {
       .value
       .trim();
 
+
   if (modalMode === "thought") {
+
     if (!content) {
       document
         .getElementById("modalContent")
@@ -217,22 +248,63 @@ function saveModal() {
     );
 
     closeModal();
+
     return;
   }
 
-  if (modalCallback) {
-    modalCallback(
-      title,
-      content,
-      description
-    );
+
+  if (modalMode === "topic") {
+
+    if (!title) {
+      document
+        .getElementById("modalTitle")
+        .focus();
+
+      return;
+    }
+
+    if (modalCallback) {
+      modalCallback(
+        title,
+        description
+      );
+    }
+
+    closeModal();
+
+    return;
   }
 
-  closeModal();
+
+  if (modalMode === "article") {
+
+    if (!content) {
+      document
+        .getElementById("modalContent")
+        .focus();
+
+      return;
+    }
+
+    if (modalCallback) {
+      modalCallback(
+        title,
+        content
+      );
+    }
+
+    closeModal();
+
+    return;
+  }
 }
 
-document.addEventListener("keydown", event => {
-  if (event.key === "Escape") {
-    closeModal();
+
+document.addEventListener(
+  "keydown",
+  event => {
+    if (event.key === "Escape") {
+      closeModal();
+    }
   }
-});
+);
