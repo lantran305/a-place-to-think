@@ -188,7 +188,7 @@ main { padding: 70px 0 90px; }
 .item-title {
   margin: 0;
   font-family: "Newsreader", Georgia, serif;
-  font-size: 25px;
+  font-size: 19px;
   font-weight: 500;
 }
 
@@ -236,7 +236,7 @@ main { padding: 70px 0 90px; }
   padding: 35px 0;
   text-align: center;
   font-family: "Newsreader", Georgia, serif;
-  font-size: 25px;
+  font-size: 19px;
   line-height: 1.5;
 }
 
@@ -268,7 +268,7 @@ main { padding: 70px 0 90px; }
 
 .card h3 {
   font-family: "Newsreader", Georgia, serif;
-  font-size: 25px;
+  font-size: 19px;
   font-weight: 500;
   margin: 0 0 7px;
 }
@@ -315,7 +315,7 @@ main { padding: 70px 0 90px; }
   margin-top: 42px;
   white-space: pre-wrap;
   font-family: "Newsreader", Georgia, serif;
-  font-size: 25px;
+  font-size: 19px;
   line-height: 1.9;
 }
 
@@ -333,7 +333,7 @@ main { padding: 70px 0 90px; }
   padding: 14px 22px;
   border-radius: 999px;
   font-family: "Newsreader", Georgia, serif;
-  font-size: 25px;
+  font-size: 19px;
 }
 
 .topic:hover {
@@ -350,7 +350,7 @@ main { padding: 70px 0 90px; }
   background: var(--paper);
   border: 1px solid var(--border);
   padding: 26px;
-  box-shadow: 0 25px 80px rgba(60, 45, 20, .18);
+  box-shadow: 0 19px 80px rgba(60, 45, 20, .18);
 }
 
 .modal {
