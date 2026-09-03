@@ -1,32 +1,55 @@
-import { state, currentTopicIndex, setView, escapeHTML, formatDate, emptyState } from "./app.js";
+import {
+  state,
+  currentTopicIndex,
+  setView,
+  escapeHTML,
+  formatDate,
+  emptyState
+} from "./app.js";
+
 import { saveState, createId } from "./storage.js";
+
+import {
+  openTopicModal,
+  openArticleModal
+} from "./modal.js";
+
 
 export function topicsView() {
   return `
     <div class="section-heading">
+
       <div>
         <h1 class="page-title">Topics</h1>
+
         <p class="page-subtitle">
           The things I keep coming back to.
         </p>
       </div>
 
-      <button class="write-btn" id="newTopicBtn">
+      <button
+        class="write-btn"
+        id="newTopicBtn"
+      >
         + New topic
       </button>
+
     </div>
+
 
     <div class="topic-grid">
 
       ${
         state.topics.length
           ? state.topics.map((topic, index) => `
+              
               <article class="topic-card">
 
                 <div
                   class="topic-main"
                   data-open-topic="${index}"
                 >
+
                   <h3>
                     ${escapeHTML(topic)}
                   </h3>
@@ -34,7 +57,9 @@ export function topicsView() {
                   <p>
                     A space for thoughts connected to this topic.
                   </p>
+
                 </div>
+
 
                 <div class="topic-actions">
 
@@ -55,6 +80,7 @@ export function topicsView() {
                 </div>
 
               </article>
+
             `).join("")
           : emptyState(
               "No topics yet.",
@@ -64,28 +90,34 @@ export function topicsView() {
 
     </div>
 
+
     <div class="section">
+
       <div class="quote">
         Thoughts become more interesting when they begin to connect.
       </div>
+
     </div>
   `;
 }
 
 
 export function topicDetailView(index) {
+
   const topic = state.topics[index];
 
   if (!topic) {
     return topicsView();
   }
 
-  const articles = state.articles
+  const articles = (state.articles || [])
     .filter(article => article.topic === topic)
     .sort(
       (a, b) =>
-        new Date(b.date) - new Date(a.date)
+        new Date(b.date) -
+        new Date(a.date)
     );
+
 
   return `
     <div class="section-heading">
@@ -109,6 +141,7 @@ export function topicDetailView(index) {
 
       </div>
 
+
       <button
         class="write-btn"
         id="addArticleBtn"
@@ -118,12 +151,14 @@ export function topicDetailView(index) {
 
     </div>
 
+
     ${
       articles.length
         ? `
           <div class="entries">
 
             ${articles.map(article => `
+
               <button
                 class="entry"
                 data-article="${article.id}"
@@ -134,13 +169,16 @@ export function topicDetailView(index) {
                   ${formatDate(article.date)}
                 </div>
 
+
                 <div>
 
                   <h3 class="entry-title">
                     ${escapeHTML(
-                      article.title || "Untitled article"
+                      article.title ||
+                      "Untitled article"
                     )}
                   </h3>
+
 
                   <p class="entry-preview">
                     ${escapeHTML(
@@ -152,11 +190,13 @@ export function topicDetailView(index) {
 
                 </div>
 
+
                 <div class="meta">
                   article
                 </div>
 
               </button>
+
             `).join("")}
 
           </div>
@@ -171,87 +211,157 @@ export function topicDetailView(index) {
 
 
 function addTopic() {
-  const name = prompt("Topic name:");
 
-  if (!name || !name.trim()) {
-    return;
-  }
+  openTopicModal(
+    (name, description) => {
 
-  const topic = name.trim();
+      if (!name || !name.trim()) {
+        return;
+      }
 
-  if (
-    state.topics.some(
-      item =>
-        item.toLowerCase() === topic.toLowerCase()
-    )
-  ) {
-    alert("This topic already exists.");
-    return;
-  }
+      const topic = name.trim();
 
-  state.topics.push(topic);
 
-  saveState(state);
+      if (
+        state.topics.some(
+          item =>
+            item.toLowerCase() ===
+            topic.toLowerCase()
+        )
+      ) {
 
-  setView("topics");
+        alert(
+          "This topic already exists."
+        );
+
+        return;
+      }
+
+
+      state.topics.push(topic);
+
+
+      if (!state.articles) {
+        state.articles = [];
+      }
+
+
+      saveState(state);
+
+      setView("topics");
+
+    }
+  );
 }
 
 
 function editTopic(index) {
-  const oldName = state.topics[index];
 
-  const newName = prompt(
-    "Rename topic:",
+  const oldName =
+    state.topics[index];
+
+
+  openTopicModal(
+    (newName) => {
+
+      if (
+        !newName ||
+        !newName.trim()
+      ) {
+        return;
+      }
+
+      const topic =
+        newName.trim();
+
+
+      if (
+        state.topics.some(
+          (item, i) =>
+            item.toLowerCase() ===
+              topic.toLowerCase() &&
+            i !== index
+        )
+      ) {
+
+        alert(
+          "This topic already exists."
+        );
+
+        return;
+      }
+
+
+      state.topics[index] =
+        topic;
+
+
+      if (!state.articles) {
+        state.articles = [];
+      }
+
+
+      state.articles.forEach(
+        article => {
+
+          if (
+            article.topic ===
+            oldName
+          ) {
+
+            article.topic =
+              topic;
+
+          }
+
+        }
+      );
+
+
+      saveState(state);
+
+      setView("topics");
+
+    },
     oldName
   );
-
-  if (!newName || !newName.trim()) {
-    return;
-  }
-
-  const topic = newName.trim();
-
-  if (
-    state.topics.some(
-      (item, i) =>
-        item.toLowerCase() === topic.toLowerCase() &&
-        i !== index
-    )
-  ) {
-    alert("This topic already exists.");
-    return;
-  }
-
-  state.topics[index] = topic;
-
-  state.articles.forEach(article => {
-    if (article.topic === oldName) {
-      article.topic = topic;
-    }
-  });
-
-  saveState(state);
-
-  setView("topics");
 }
 
 
 function deleteTopic(index) {
-  const topic = state.topics[index];
 
-  const confirmed = confirm(
-    `Delete "${topic}"?\n\nArticles inside this topic will also be deleted.`
-  );
+  const topic =
+    state.topics[index];
+
+
+  const confirmed =
+    confirm(
+      `Delete "${topic}"?\n\nArticles inside this topic will also be deleted.`
+    );
+
 
   if (!confirmed) {
     return;
   }
 
-  state.articles = state.articles.filter(
-    article => article.topic !== topic
+
+  if (!state.articles) {
+    state.articles = [];
+  }
+
+
+  state.articles =
+    state.articles.filter(
+      article =>
+        article.topic !== topic
+    );
+
+
+  state.topics.splice(
+    index,
+    1
   );
 
-  state.topics.splice(index, 1);
 
   saveState(state);
 
@@ -259,44 +369,86 @@ function deleteTopic(index) {
 }
 
 
-function saveArticle(title, content) {
-  if (!content.trim()) {
-    return;
-  }
+function addArticle() {
 
-  const topic = state.topics[currentTopicIndex];
+  const topic =
+    state.topics[
+      currentTopicIndex
+    ];
+
 
   if (!topic) {
     return;
   }
 
-  state.articles.push({
-    id: createId(),
-    topic,
-    title: title.trim(),
-    content: content.trim(),
-    date: new Date().toISOString()
-  });
 
-  saveState(state);
+  openArticleModal(
+    (title, content) => {
 
-  setView(
-    "topic-detail",
-    currentTopicIndex
+      if (
+        !content ||
+        !content.trim()
+      ) {
+        return;
+      }
+
+
+      if (!state.articles) {
+        state.articles = [];
+      }
+
+
+      state.articles.push({
+
+        id: createId(),
+
+        topic,
+
+        title:
+          title.trim(),
+
+        content:
+          content.trim(),
+
+        date:
+          new Date()
+            .toISOString()
+
+      });
+
+
+      saveState(state);
+
+
+      setView(
+        "topic-detail",
+        currentTopicIndex
+      );
+
+    }
   );
 }
 
 
 function showArticle(id) {
-  const article = state.articles.find(
-    item => item.id === id
-  );
+
+  const article =
+    (state.articles || [])
+      .find(
+        item =>
+          item.id === id
+      );
+
 
   if (!article) {
     return;
   }
 
-  document.getElementById("app").innerHTML = `
+
+  document.getElementById(
+    "app"
+  ).innerHTML = `
+
     <article class="reading">
 
       <button
@@ -306,84 +458,93 @@ function showArticle(id) {
         ← ${escapeHTML(article.topic)}
       </button>
 
+
       <div class="eyebrow">
         Topic
       </div>
 
+
       <h1>
         ${escapeHTML(
-          article.title || "Untitled article"
+          article.title ||
+          "Untitled article"
         )}
       </h1>
 
+
       <div class="reading-date">
-        ${formatDate(article.date)}
+        ${formatDate(
+          article.date
+        )}
       </div>
 
+
       <div class="reading-content">
-        ${escapeHTML(article.content)}
+        ${escapeHTML(
+          article.content
+        )}
       </div>
 
     </article>
+
   `;
 
+
   document
-    .getElementById("backArticleBtn")
+    .getElementById(
+      "backArticleBtn"
+    )
     .addEventListener(
       "click",
-      () => setView(
-        "topic-detail",
-        currentTopicIndex
-      )
+      () => {
+
+        setView(
+          "topic-detail",
+          currentTopicIndex
+        );
+
+      }
     );
-}
-
-
-function openArticleModal() {
-  const title = prompt("Article title:");
-
-  if (title === null) {
-    return;
-  }
-
-  const content = prompt("Article content:");
-
-  if (content === null || !content.trim()) {
-    return;
-  }
-
-  saveArticle(
-    title,
-    content
-  );
 }
 
 
 export function bindTopicEvents() {
 
   const newTopicBtn =
-    document.getElementById("newTopicBtn");
+    document.getElementById(
+      "newTopicBtn"
+    );
+
 
   if (newTopicBtn) {
+
     newTopicBtn.addEventListener(
       "click",
       addTopic
     );
+
   }
 
 
   document
-    .querySelectorAll("[data-edit-topic]")
+    .querySelectorAll(
+      "[data-edit-topic]"
+    )
     .forEach(button => {
 
       button.addEventListener(
         "click",
         event => {
+
           event.stopPropagation();
+
 
           editTopic(
-            Number(button.dataset.editTopic)
+            Number(
+              button.dataset.editTopic
+            )
           );
+
         }
       );
 
@@ -391,17 +552,24 @@ export function bindTopicEvents() {
 
 
   document
-    .querySelectorAll("[data-delete-topic]")
+    .querySelectorAll(
+      "[data-delete-topic]"
+    )
     .forEach(button => {
 
       button.addEventListener(
         "click",
         event => {
+
           event.stopPropagation();
 
+
           deleteTopic(
-            Number(button.dataset.deleteTopic)
+            Number(
+              button.dataset.deleteTopic
+            )
           );
+
         }
       );
 
@@ -409,16 +577,22 @@ export function bindTopicEvents() {
 
 
   document
-    .querySelectorAll("[data-open-topic]")
+    .querySelectorAll(
+      "[data-open-topic]"
+    )
     .forEach(element => {
 
       element.addEventListener(
         "click",
         () => {
+
           setView(
             "topic-detail",
-            Number(element.dataset.openTopic)
+            Number(
+              element.dataset.openTopic
+            )
           );
+
         }
       );
 
@@ -426,39 +600,60 @@ export function bindTopicEvents() {
 
 
   const addArticleBtn =
-    document.getElementById("addArticleBtn");
+    document.getElementById(
+      "addArticleBtn"
+    );
+
 
   if (addArticleBtn) {
+
     addArticleBtn.addEventListener(
       "click",
-      openArticleModal
+      addArticle
     );
+
   }
 
 
   const backToTopics =
-    document.getElementById("backToTopics");
+    document.getElementById(
+      "backToTopics"
+    );
+
 
   if (backToTopics) {
+
     backToTopics.addEventListener(
       "click",
-      () => setView("topics")
+      () => {
+
+        setView(
+          "topics"
+        );
+
+      }
     );
+
   }
 
 
   document
-    .querySelectorAll("[data-article]")
+    .querySelectorAll(
+      "[data-article]"
+    )
     .forEach(button => {
 
       button.addEventListener(
         "click",
         () => {
+
           showArticle(
             button.dataset.article
           );
+
         }
       );
 
     });
+
 }
