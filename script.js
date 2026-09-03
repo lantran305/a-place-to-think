@@ -295,25 +295,7 @@ function deleteTopic(index) {
   saveState();
   render();
 }
-function bindViewEvents() {
-  const newTopicBtn = document.getElementById("newTopicBtn");
 
-  if (newTopicBtn) {
-    newTopicBtn.addEventListener("click", addTopic);
-  }
-
-  document.querySelectorAll("[data-edit-topic]").forEach(button => {
-    button.addEventListener("click", () => {
-      editTopic(Number(button.dataset.editTopic));
-    });
-  });
-}
-
-  document.querySelectorAll("[data-delete-topic]").forEach(button => {
-    button.addEventListener("click", () => {
-      deleteTopic(Number(button.dataset.deleteTopic));
-    });
-  });
 function showEntry(id) {
   const entry = state.journal.find(item => item.id === id);
   if (!entry) return;
@@ -332,21 +314,48 @@ function showEntry(id) {
 }
 
 function bindViewEvents() {
+  // Navigation
   document.querySelectorAll("[data-view]").forEach(button => {
     button.addEventListener("click", (e) => {
       e.preventDefault();
       currentView = button.dataset.view;
       render();
-      window.scrollTo({top: 0, behavior: "smooth"});
+      window.scrollTo({ top: 0, behavior: "smooth" });
     });
   });
 
+  // Open journal entry
   document.querySelectorAll("[data-entry]").forEach(button => {
-    button.addEventListener("click", () => showEntry(button.dataset.entry));
+    button.addEventListener("click", () => {
+      showEntry(button.dataset.entry);
+    });
   });
 
+  // New thought
   const action = document.getElementById("pageAction");
-  if (action) action.addEventListener("click", openModal);
+  if (action) {
+    action.addEventListener("click", openModal);
+  }
+
+  // New topic
+  const newTopicBtn = document.getElementById("newTopicBtn");
+  if (newTopicBtn) {
+    newTopicBtn.addEventListener("click", addTopic);
+  }
+
+  // Edit topic
+  document.querySelectorAll("[data-edit-topic]").forEach(button => {
+    button.addEventListener("click", () => {
+      editTopic(Number(button.dataset.editTopic));
+    });
+  });
+
+  // Delete topic
+  document.querySelectorAll("[data-delete-topic]").forEach(button => {
+    button.addEventListener("click", () => {
+      deleteTopic(Number(button.dataset.deleteTopic));
+    });
+  });
 }
 
 function openModal() {
