@@ -123,7 +123,7 @@ main { padding: 70px 0 90px; }
 
 .hero h1 {
   margin: 13px 0 10px;
-  font-size: clamp(44px, 7vw, 76px);
+  font-size: clamp(42px, 6vw, 66px);
   line-height: 1.05;
 }
 
