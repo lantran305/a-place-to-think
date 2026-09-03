@@ -1,4 +1,4 @@
-const STORAGE_KEY = "a-place-to-think-journal";
+const STORAGE_KEY = "a-place-to-think";
 
 const defaultIdeas = [
   {
