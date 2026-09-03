@@ -188,7 +188,7 @@ main { padding: 70px 0 90px; }
 .item-title {
   margin: 0;
   font-family: "Newsreader", Georgia, serif;
-  font-size: 21px;
+  font-size: 25px;
   font-weight: 500;
 }
 
@@ -315,7 +315,7 @@ main { padding: 70px 0 90px; }
   margin-top: 42px;
   white-space: pre-wrap;
   font-family: "Newsreader", Georgia, serif;
-  font-size: 21px;
+  font-size: 25px;
   line-height: 1.9;
 }
 
@@ -333,7 +333,7 @@ main { padding: 70px 0 90px; }
   padding: 14px 22px;
   border-radius: 999px;
   font-family: "Newsreader", Georgia, serif;
-  font-size: 21px;
+  font-size: 25px;
 }
 
 .topic:hover {
